@@ -1,0 +1,22 @@
+{
+	"KSR030_4WD|block": "KSR030_4WD",
+	"KSR030_4WD.MotorNum.M1A|block": "M1A",
+	"KSR030_4WD.MotorNum.M1B|block": "M1B",
+	"KSR030_4WD.MotorNum.M2A|block": "M2A",
+	"KSR030_4WD.MotorNum.M2B|block": "M2B",
+	"KSR030_4WD.MecanumState.Forward|block": "直線前進",
+	"KSR030_4WD.MecanumState.Back|block": "直線後退",
+	"KSR030_4WD.MecanumState.Left|block": "左側橫行",
+	"KSR030_4WD.MecanumState.Right|block": "右側橫行",
+	"KSR030_4WD.MecanumState.Forward_Left|block": "左前方前進",
+	"KSR030_4WD.MecanumState.Forward_Right|block": "右前方前進",
+	"KSR030_4WD.MecanumState.Back_Left|block": "左後方後退",
+	"KSR030_4WD.MecanumState.Back_Right|block": "右後方後退",
+	"KSR030_4WD.MecanumState.Clockwise|block": "順時針轉",
+	"KSR030_4WD.MecanumState.Counterclockwise|block": "逆時針轉",
+	"KSR030_4WD.MecanumState.Stop|block": "停止",
+	"KSR030_4WD.Motor_4WD|block": "馬達 %channel|速度 %speed",
+	"KSR030_4WD.Motor_4WD_STOP|block": "全部馬達停止",
+	"KSR030_4WD.Mecanum_Car|block": "麥克納姆輪車種 %index|速度 %speed"
+	
+}
