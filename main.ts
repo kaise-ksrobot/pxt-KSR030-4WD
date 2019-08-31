@@ -22,7 +22,7 @@ namespace KSR030_4WD {
     export enum MecanumState {
         //% blockId="Go_Forward" block="Forward"
         Forward = 0,
-        //% blockId="Car_Back" block="Back"
+        //% blockId="Car_Back" block="Backward"
         Back = 1,
         //% blockId="Go_Left" block="Left"
         Left = 2,
@@ -32,9 +32,9 @@ namespace KSR030_4WD {
         Forward_Left = 4,
         //% blockId="GO_Forward_Right" block="Forward_Right"
         Forward_Right = 5,
-        //% blockId="GO_Back_Left" block="Back_Left"
+        //% blockId="GO_Back_Left" block="Backward_Left"
         Back_Left = 6,
-        //% blockId="GO_Back_Right" block="Back_Right"
+        //% blockId="GO_Back_Right" block="Backward_Right"
         Back_Right = 7,
         //% blockId="GO_Clockwise" block="Clockwise"
         Clockwise = 8,
