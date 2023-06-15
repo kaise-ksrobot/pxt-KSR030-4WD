@@ -8,7 +8,6 @@ namespace KSR030_4WD {
     const LED0_ON_L = 0x06
     let version_num = 0
 
-
     
     export enum Version {
         //% blockId="V1" block="V1"
