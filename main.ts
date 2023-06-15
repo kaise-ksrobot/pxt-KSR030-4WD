@@ -3,10 +3,20 @@
  */
 //% weight=10 color=#00A6F0 icon="\uf085" block="KSR030_4WD"
 namespace KSR030_4WD {
-     
+
     const IIC_ADDRESS = 0x40
     const LED0_ON_L = 0x06
-      
+    let version_num = 0
+
+
+    export enum Version {
+        //% blockId="V1" block="V1"
+        V1 = 0,
+        //% blockId="V2" block="V2"
+        V2 = 1,
+
+    }
+
     export enum MotorNum4WD {
         //% blockId="M1A" block="M1A"
         M1A = 0,
@@ -42,88 +52,87 @@ namespace KSR030_4WD {
         Counterclockwise = 9,
         //% blockId="Go_Stop" block="Stop"
         Stop = 10,
-     
+
     }
 
     function setPwm(channel: number, on: number, off: number): void {
-		if (channel < 0 || channel > 15)
+        if (channel < 0 || channel > 15)
             return;
 
         let buf = pins.createBuffer(5);
         buf[0] = LED0_ON_L + 4 * channel;
         buf[1] = on & 0xff;
-        buf[2] = (on>>8) & 0xff;
+        buf[2] = (on >> 8) & 0xff;
         buf[3] = off & 0xff;
-        buf[4] = (off>>8) & 0xff;
+        buf[4] = (off >> 8) & 0xff;
         pins.i2cWriteBuffer(IIC_ADDRESS, buf);
-	}
-   
-    function motor_map(x: number)
-    {
-        x = x*16; // map 255 to 4096
-		if(x > 4095){
-			x= 4095;
-		}
-		if(x < -4095){
-			x= -4095;
-		}
+    }
+
+    function motor_map(x: number) {
+        x = x * 16; // map 255 to 4096
+        if (x > 4095) {
+            x = 4095;
+        }
+        if (x < -4095) {
+            x = -4095;
+        }
         return x;
     }
 
 
- 
+
 
     //% blockId=KSR030_4WD_Motor
     //% block="4WD Motor channel %channel|speed %speed"
-	//% weight=85
-	//% speed.min=-255 speed.max=255
-	export function Motor_4WD(channel: MotorNum4WD, speed: number): void {
-		
-        let pwm1 =0;
-        let pwm2 =0;
-        speed=motor_map(speed);
+    //% weight=85
+    //% speed.min=-255 speed.max=255
+    export function Motor_4WD(channel: MotorNum4WD, speed: number): void {
 
-        switch(channel){
+        let pwm1 = 0;
+        let pwm2 = 0;
+        speed = motor_map(speed);
 
-            case 0:{
+        switch (channel) {
+
+            case 0: {
                 pwm1 = 12;
-                pwm2 = 13;                
+                pwm2 = 13;
                 break;
             }
-            case 1:{
+            case 1: {
                 pwm1 = 14;
-                pwm2 = 15;                
+                pwm2 = 15;
                 break;
             }
-            case 2:{
+            case 2: {
                 pwm1 = 0;
-                pwm2 = 1;               
+                pwm2 = 1;
                 break;
             }
-            case 3:{
+            case 3: {
                 pwm1 = 2;
-                pwm2 = 3;              
+                pwm2 = 3;
                 break;
             }
-            
+
         }
-        
-		if(speed>=0){
-			setPwm(pwm1, 0, speed)
-			setPwm(pwm2, 0, 0)
-		}else{
-			setPwm(pwm1, 0, 0)
-			setPwm(pwm2, 0, -speed)
+
+        if (speed >= 0) {
+            setPwm(pwm1, 0, speed)
+            setPwm(pwm2, 0, 0)
+        } else {
+            setPwm(pwm1, 0, 0)
+            setPwm(pwm2, 0, -speed)
         }
-            
+
     }
 
     //% blockId=KSR030_4WD_Motor_STOP
     //% block="All Motor STOP"
-	//% weight=85
-	
-	export function Motor_4WD_STOP(): void {
-		
+    //% weight=85
+
+    export function Motor_4WD_STOP(): void {
+
         setPwm(12, 0, 0);
         setPwm(13, 0, 0);
         setPwm(14, 0, 0);
@@ -131,94 +140,105 @@ namespace KSR030_4WD {
         setPwm(0, 0, 0);
         setPwm(1, 0, 0);
         setPwm(3, 0, 0);
-		setPwm(2, 0, 0);
-        
-            
+        setPwm(2, 0, 0);
+
+
     }
-    
+
+    //% blockId=KSR030_4WD_Mecanum_Car_Version
+    //% block="Mecanum_Car_Version %version"
+    //% weight=88
+    //% 
+    export function Mecanum_Car_Version(version: Version): void {
+        version_num = version;
+
+    }
 
 
     //% blockId=KSR030_4WD_Mecanum_Car
-    //% block="Mecanum_Car %index|Speed %speed"
+    //% block="Mecanum_Car %index |Speed %speed"
     //% weight=87
     //% speed.min=0 speed.max=255
     export function Mecanum_Car(index: MecanumState, speed: number): void {
+        if (version_num > 0)
+            speed = -speed;
+
         switch (index) {
-            case MecanumState.Forward: 
-                Motor_4WD(MotorNum4WD.M1B,speed);
-                Motor_4WD(MotorNum4WD.M1A,speed);
-                Motor_4WD(MotorNum4WD.M2B,speed);
-                Motor_4WD(MotorNum4WD.M2A,speed);
+            case MecanumState.Forward:
+                Motor_4WD(MotorNum4WD.M1B, speed);
+                Motor_4WD(MotorNum4WD.M1A, speed);
+                Motor_4WD(MotorNum4WD.M2B, speed);
+                Motor_4WD(MotorNum4WD.M2A, speed);
                 break;
-            case MecanumState.Back: 
-                Motor_4WD(MotorNum4WD.M1B,-speed);
-                Motor_4WD(MotorNum4WD.M1A,-speed);
-                Motor_4WD(MotorNum4WD.M2B,-speed);
-                Motor_4WD(MotorNum4WD.M2A,-speed);
+            case MecanumState.Back:
+                Motor_4WD(MotorNum4WD.M1B, -speed);
+                Motor_4WD(MotorNum4WD.M1A, -speed);
+                Motor_4WD(MotorNum4WD.M2B, -speed);
+                Motor_4WD(MotorNum4WD.M2A, -speed);
                 break;
-            case MecanumState.Left: 
-                Motor_4WD(MotorNum4WD.M1B,-speed);
-                Motor_4WD(MotorNum4WD.M1A,speed);
-                Motor_4WD(MotorNum4WD.M2B,speed);
-                Motor_4WD(MotorNum4WD.M2A,-speed);
+            case MecanumState.Left:
+                Motor_4WD(MotorNum4WD.M1B, -speed);
+                Motor_4WD(MotorNum4WD.M1A, speed);
+                Motor_4WD(MotorNum4WD.M2B, speed);
+                Motor_4WD(MotorNum4WD.M2A, -speed);
                 break;
-            case MecanumState.Right: 
-                Motor_4WD(MotorNum4WD.M1B,speed);
-                Motor_4WD(MotorNum4WD.M1A,-speed);
-                Motor_4WD(MotorNum4WD.M2B,-speed);
-                Motor_4WD(MotorNum4WD.M2A,speed);
+            case MecanumState.Right:
+                Motor_4WD(MotorNum4WD.M1B, speed);
+                Motor_4WD(MotorNum4WD.M1A, -speed);
+                Motor_4WD(MotorNum4WD.M2B, -speed);
+                Motor_4WD(MotorNum4WD.M2A, speed);
                 break;
-            case MecanumState.Forward_Left: 
-                Motor_4WD(MotorNum4WD.M1B,0);
-                Motor_4WD(MotorNum4WD.M1A,speed);
-                Motor_4WD(MotorNum4WD.M2B,speed);
-                Motor_4WD(MotorNum4WD.M2A,0);
+            case MecanumState.Forward_Left:
+                Motor_4WD(MotorNum4WD.M1B, 0);
+                Motor_4WD(MotorNum4WD.M1A, speed);
+                Motor_4WD(MotorNum4WD.M2B, speed);
+                Motor_4WD(MotorNum4WD.M2A, 0);
                 break;
-            case MecanumState.Forward_Right: 
-                Motor_4WD(MotorNum4WD.M1B,speed);
-                Motor_4WD(MotorNum4WD.M1A,0);
-                Motor_4WD(MotorNum4WD.M2B,0);
-                Motor_4WD(MotorNum4WD.M2A,speed); 
+            case MecanumState.Forward_Right:
+                Motor_4WD(MotorNum4WD.M1B, speed);
+                Motor_4WD(MotorNum4WD.M1A, 0);
+                Motor_4WD(MotorNum4WD.M2B, 0);
+                Motor_4WD(MotorNum4WD.M2A, speed);
                 break;
-            case MecanumState.Back_Left: 
-                Motor_4WD(MotorNum4WD.M1B,-speed);
-                Motor_4WD(MotorNum4WD.M1A,0);
-                Motor_4WD(MotorNum4WD.M2B,0);
-                Motor_4WD(MotorNum4WD.M2A,-speed); 
+            case MecanumState.Back_Left:
+                Motor_4WD(MotorNum4WD.M1B, -speed);
+                Motor_4WD(MotorNum4WD.M1A, 0);
+                Motor_4WD(MotorNum4WD.M2B, 0);
+                Motor_4WD(MotorNum4WD.M2A, -speed);
                 break;
-            case MecanumState.Back_Right: 
-                Motor_4WD(MotorNum4WD.M1B,0);
-                Motor_4WD(MotorNum4WD.M1A,-speed);
-                Motor_4WD(MotorNum4WD.M2B,-speed);
-                Motor_4WD(MotorNum4WD.M2A,0);
+            case MecanumState.Back_Right:
+                Motor_4WD(MotorNum4WD.M1B, 0);
+                Motor_4WD(MotorNum4WD.M1A, -speed);
+                Motor_4WD(MotorNum4WD.M2B, -speed);
+                Motor_4WD(MotorNum4WD.M2A, 0);
                 break;
-            case MecanumState.Clockwise: 
-                Motor_4WD(MotorNum4WD.M1B,speed);
-                Motor_4WD(MotorNum4WD.M1A,-speed);
-                Motor_4WD(MotorNum4WD.M2B,speed);
-                Motor_4WD(MotorNum4WD.M2A,-speed); 
+            case MecanumState.Clockwise:
+                Motor_4WD(MotorNum4WD.M1B, speed);
+                Motor_4WD(MotorNum4WD.M1A, -speed);
+                Motor_4WD(MotorNum4WD.M2B, speed);
+                Motor_4WD(MotorNum4WD.M2A, -speed);
                 break;
-            case MecanumState.Counterclockwise: 
-                Motor_4WD(MotorNum4WD.M1B,-speed);
-                Motor_4WD(MotorNum4WD.M1A,speed);
-                Motor_4WD(MotorNum4WD.M2B,-speed);
-                Motor_4WD(MotorNum4WD.M2A,speed);
+            case MecanumState.Counterclockwise:
+                Motor_4WD(MotorNum4WD.M1B, -speed);
+                Motor_4WD(MotorNum4WD.M1A, speed);
+                Motor_4WD(MotorNum4WD.M2B, -speed);
+                Motor_4WD(MotorNum4WD.M2A, speed);
                 break;
-            case MecanumState.Stop: 
-                Motor_4WD(MotorNum4WD.M1B,0);
-                Motor_4WD(MotorNum4WD.M1A,0);
-                Motor_4WD(MotorNum4WD.M2B,0);
-                Motor_4WD(MotorNum4WD.M2A,0);
+            case MecanumState.Stop:
+                Motor_4WD(MotorNum4WD.M1B, 0);
+                Motor_4WD(MotorNum4WD.M1A, 0);
+                Motor_4WD(MotorNum4WD.M2B, 0);
+                Motor_4WD(MotorNum4WD.M2A, 0);
                 break;
-            
+
         }
     }
- 
+
 
 
 }
-	
-	
+
+
 
 
 

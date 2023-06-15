@@ -17,6 +17,7 @@
 	"KSR030_4WD.MecanumState.Stop|block": "停止",
 	"KSR030_4WD.Motor_4WD|block": "馬達 %channel|速度 %speed",
 	"KSR030_4WD.Motor_4WD_STOP|block": "全部馬達停止",
-	"KSR030_4WD.Mecanum_Car|block": "麥克納姆輪車種 %index|速度 %speed"
+	"KSR030_4WD.Mecanum_Car|block": "麥克納姆輪車種 %index|速度 %speed",
+	"KSR030_4WD.Mecanum_Car_Version|block": "麥克納姆輪車種 %version 版本"
 	
 }

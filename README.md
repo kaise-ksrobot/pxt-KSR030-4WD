@@ -4,8 +4,17 @@ KSR030  四路直流馬達版本\
 [http://ksr030.kaise.com.tw](http://ksr030.kaise.com.tw)\
 ![image](images/ksr030.png)
 
+## 硬體版本
+
+<img src="images/V1.png" alt="image" style="zoom:50%;" /><img src="images/V2.png" alt="image" style="zoom:50%;" />
+
+
+
+
+
 ## User Guide 
-![image](images/block.png)
+
+<img src="images/block.png" alt="image" style="zoom:80%;" />
 
 ## Code Example 
 
@@ -17,5 +26,4 @@ MIT
 
 * for PXT/microbit
 (The metadata above is needed for package search.)
-
 
